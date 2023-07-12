@@ -1,0 +1,15 @@
+/home/mrkiyak/trainings/dot_net/JobInterview/ConsoleApp/bin/Debug/net7.0/ConsoleApp
+/home/mrkiyak/trainings/dot_net/JobInterview/ConsoleApp/bin/Debug/net7.0/ConsoleApp.deps.json
+/home/mrkiyak/trainings/dot_net/JobInterview/ConsoleApp/bin/Debug/net7.0/ConsoleApp.runtimeconfig.json
+/home/mrkiyak/trainings/dot_net/JobInterview/ConsoleApp/bin/Debug/net7.0/ConsoleApp.dll
+/home/mrkiyak/trainings/dot_net/JobInterview/ConsoleApp/bin/Debug/net7.0/ConsoleApp.pdb
+/home/mrkiyak/trainings/dot_net/JobInterview/ConsoleApp/obj/Debug/net7.0/ConsoleApp.csproj.AssemblyReference.cache
+/home/mrkiyak/trainings/dot_net/JobInterview/ConsoleApp/obj/Debug/net7.0/ConsoleApp.GeneratedMSBuildEditorConfig.editorconfig
+/home/mrkiyak/trainings/dot_net/JobInterview/ConsoleApp/obj/Debug/net7.0/ConsoleApp.AssemblyInfoInputs.cache
+/home/mrkiyak/trainings/dot_net/JobInterview/ConsoleApp/obj/Debug/net7.0/ConsoleApp.AssemblyInfo.cs
+/home/mrkiyak/trainings/dot_net/JobInterview/ConsoleApp/obj/Debug/net7.0/ConsoleApp.csproj.CoreCompileInputs.cache
+/home/mrkiyak/trainings/dot_net/JobInterview/ConsoleApp/obj/Debug/net7.0/ConsoleApp.dll
+/home/mrkiyak/trainings/dot_net/JobInterview/ConsoleApp/obj/Debug/net7.0/refint/ConsoleApp.dll
+/home/mrkiyak/trainings/dot_net/JobInterview/ConsoleApp/obj/Debug/net7.0/ConsoleApp.pdb
+/home/mrkiyak/trainings/dot_net/JobInterview/ConsoleApp/obj/Debug/net7.0/ConsoleApp.genruntimeconfig.cache
+/home/mrkiyak/trainings/dot_net/JobInterview/ConsoleApp/obj/Debug/net7.0/ref/ConsoleApp.dll
