@@ -12,6 +12,13 @@ Console.WriteLine("the application output path is designed for your os desktop. 
 string folderName = Console.ReadLine();
 #endregion
 #region VALIDATION
+bool ValidateInput()
+{
+    int num1, num2;
+    bool b1 = int.TryParse(countImagesToDownload, out num1);
+    bool b2 = int.TryParse(countParallelDownloadLimit, out num2);
+    return b1 && b2;
+}
 if (ValidateInput())
 {
     var p1 = int.Parse(countImagesToDownload);
@@ -43,6 +50,7 @@ void Init(IDownloadManager manager, IDownloadResult downloadResult, int countIma
     manager.SourceURL = "https://picsum.photos/640/480";
     manager.DownloadResult = downloadResult;
     manager.TargetPath = !string.IsNullOrEmpty(outputFolderName) ? outputFolderName : "output";
+    manager.PreventDuplicateOn = true;
     
     Console.WriteLine($"$Downloading {countImagesToDownload} images ({countParallelDownloadLimit} parallel download at most)");
     manager.Progress += (sender, args) =>
@@ -58,13 +66,8 @@ void Init(IDownloadManager manager, IDownloadResult downloadResult, int countIma
     }
 }
 
-bool ValidateInput()
-{
-    int num1, num2;
-    bool b1 = int.TryParse(countImagesToDownload, out num1);
-    bool b2 = int.TryParse(countParallelDownloadLimit, out num2);
-    return b1 && b2;
-}
+
+
 
 
 

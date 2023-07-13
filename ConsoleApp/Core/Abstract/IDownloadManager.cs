@@ -13,7 +13,8 @@ public interface IDownloadManager
     int TotalRequestFile { get; set; }
     int TotalRequestForParallelFile { get; set; }
     
-    void CalculateIterateTime();
 
     event EventHandler Progress;
+
+    bool PreventDuplicateOn { get; set; }
 }
