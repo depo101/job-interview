@@ -14,9 +14,10 @@ public class DownloadManager : Abstract.IDownloadManager
     public string TargetPath { get; set; }
     public int TotalRequestFile { get; set; }
     public int TotalRequestForParallelFile { get; set; }
-    int IterateReminderCount { get; set; }
-    object k = 1;
     
+    object k = 1;
+    HashSet<string> hashSet = new HashSet<string>();
+    int flagDuplicateCount = 0;
 
     #endregion
 
@@ -27,22 +28,53 @@ public class DownloadManager : Abstract.IDownloadManager
         {
             
         }
+        
         Parallel.For(0, parallelCount, i =>
         {
             HttpClient client = new HttpClient();
             Task<byte[]> response = client.GetByteArrayAsync(this.SourceURL);
             var byteArray = response.Result;
-            string folder = Environment.GetFolderPath(Environment.SpecialFolder.Desktop);
-            string specificFolder = Path.Combine(folder, this.TargetPath + $"/{k}.jpg");
-            ByteArrayToFile(byteArray, specificFolder);
             
-            if (Progress != null)
+            if (CheckImageUnique(byteArray))
             {
-                Progress.Invoke(this, new DownloadEventArgs(){Message = $"{k}"});
+                string folder = Environment.GetFolderPath(Environment.SpecialFolder.Desktop);
+                string specificFolder = Path.Combine(folder, this.TargetPath + $"/{k}.jpg");
+                ByteArrayToFile(byteArray, specificFolder);
+                
+                if (Progress != null)
+                {
+                    Progress.Invoke(this, new DownloadEventArgs(){Message = $"{k}"});
+                }
+                k = (int)k + 1;                
             }
-            
-            k = (int)k + 1;
         });
+    }
+
+    private bool CheckImageUnique(byte[] byteArray)
+    {
+        lock (hashSet)
+        {
+            string base64str = Convert.ToBase64String(byteArray, 0, byteArray.Length);
+            bool res = hashSet.Add(base64str);
+            
+            if (PreventDuplicateOn)
+            {
+                if (!res)
+                {
+                    flagDuplicateCount += 1;
+                    Console.WriteLine("repetitive image blocked by app security");
+                }
+                return res;
+            }
+            else
+            {
+                if (!res)
+                {
+                    Console.WriteLine("repetitive image detected ! app security is off !");
+                }
+                return true;
+            }
+        }
     }
     
 
@@ -51,23 +83,40 @@ public class DownloadManager : Abstract.IDownloadManager
     #region PUBLIC FUNCTIONS
 public IDownloadResult Download()
     {
-        CheckTargetPath();
-        CalculateIterateTime();
         try
         {
-            while (this.TotalRequestForParallelFile <= this.TotalRequestFile)
+            CheckTargetPath();
+            int total = this.TotalRequestFile;
+            int parallel = this.TotalRequestForParallelFile;
+            
+            DownloadPart(total, parallel);
+            void DownloadPart(int total, int parallel)
             {
-                GetImageFromResourceAsParallel(this.TotalRequestForParallelFile);
-                this.TotalRequestFile -= this.TotalRequestForParallelFile;                
-            };
+                int reminder = CalculateIterateReminder(total, parallel);
+                flagDuplicateCount = 0;
+                while (parallel <= total)
+                {
+                    GetImageFromResourceAsParallel(parallel); 
+                    total -= parallel;                 
+                };
 
-            if (IterateReminderCount > 0)
-            {
-                GetImageFromResourceAsParallel(this.IterateReminderCount);
+                if (reminder > 0 || flagDuplicateCount > 0)
+                {
+                    total = reminder + flagDuplicateCount;
+                    if (parallel < total)
+                    {
+                        DownloadPart(total, parallel);
+                    }
+                    else
+                    {
+                        DownloadPart(total, total);
+                        //GetImageFromResourceAsParallel(total); 
+                    }
+                }
             }
             
             DownloadResult.IsDownloaded = true;
-            DownloadResult.ResultMessage = "an image downloaded successfully";
+            //DownloadResult.ResultMessage = "an image downloaded successfully";
             //DownloadResult.ResultObject = ByteArrayToHex(byteArray);
             return DownloadResult;
             
@@ -114,15 +163,14 @@ public IDownloadResult Download()
         memoryStream.Close();
         fs.Close();
     }
-    public void CalculateIterateTime()
+    private int CalculateIterateReminder(int total, int parallel)
     {
-        bool totalRequestFileIsDivided = this.TotalRequestFile % this.TotalRequestForParallelFile == 0; 
-        IterateReminderCount = !totalRequestFileIsDivided ? this.TotalRequestFile % this.TotalRequestForParallelFile : 0;
+        bool totalRequestFileIsDivided = total % parallel == 0; 
+        return !totalRequestFileIsDivided ? total % parallel : 0;
     }
 
     public event EventHandler? Progress;
-
-    
+    public bool PreventDuplicateOn { get; set; }
 
     #endregion
     
